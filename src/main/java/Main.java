@@ -50,24 +50,10 @@ public class Main {
                         case REGISTRATION_SUCCESS_110:
                             System.out.println("enter the license key: XXXX-XXXX-XXXX-XXXX");
                             in = scanner.nextLine();
-
                             if (in.matches(REGEX_KEY)) {
-                                code = restClient.get("/check/key", in);
+                                code = restClient.get("/check/license", in);
                                 System.out.println(code.message);
-                                //TODO
-                                if (code == StatusCode.LICENSE_SUCCESS_120) {
-
-                                } else {
-                                    continue;
-                                }
-
-
-
-
-                            } else {
-
                             }
-
                             //ввод ключа. Проверка его на сервере.
                             break;
                         case LOGIN_FAILED_201:
