@@ -22,9 +22,9 @@ public class RestClient {
         return restClient;
     }
 
-    public Object get(String uri, String data) {
+    public StatusCode get(String uri, String data) {
         HttpEntity<String> requestEntity = new HttpEntity<>(data, headers);
         ResponseEntity<String> responseEntity = rest.exchange(server + uri, HttpMethod.GET, requestEntity, String.class);
-        return responseEntity.getBody();
+        return StatusCode.findByCode(responseEntity.getBody());
     }
 }
