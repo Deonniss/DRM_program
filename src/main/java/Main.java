@@ -1,9 +1,14 @@
 import data.UserData;
 import handler.ComputerIdentifierHandler;
 import org.json.JSONObject;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.util.MultiValueMapAdapter;
 import rest.RestClient;
 import rest.StatusCode;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Main {
@@ -12,7 +17,17 @@ public class Main {
     private static final RestClient restClient = RestClient.getInstance();
     private static final String REGEX_KEY = "^\\w{4}-\\w{4}-\\w{4}-\\w{4}$";
 
+
     public static void main(String[] args) {
+
+        MultiValueMap<String, String> ma = new LinkedMultiValueMap<>();
+
+//        MultiM<String, String> m = new MultiValueMapAdapter<>();
+        ma.add("username", "den1");
+        ma.add("password", "0000");
+        System.out.println(restClient.get("/login", ma));
+    }
+    public static void main2(String[] args) {
 
 
         String in = "";
@@ -30,7 +45,8 @@ public class Main {
                         && (params[0].equalsIgnoreCase("reg") || params[0].equalsIgnoreCase("log")) && params[2].length() > 2
                         && params[2].length() < 10 && params[4].length() > 2 && params[4].length() < 10) {
                     UserData userData = new UserData(params[2].toLowerCase(), params[4].toLowerCase(), params[0].toLowerCase());
-                    StatusCode code = restClient.get("/login", JSONObject.valueToString(userData));
+                    StatusCode code = null;
+//                    StatusCode code = restClient.get("/login", JSONObject.valueToString(userData));
 
                     System.out.println(code.message);
 
@@ -38,7 +54,8 @@ public class Main {
                         case LOGIN_SUCCESS_101:
                             //генерация и отправка hardware и проверка уникальности
                             String hardwareID = ComputerIdentifierHandler.generateLicenseKey();
-                            code = restClient.get("/check/hardware", hardwareID);
+//                            code = restClient.get("/check/hardware", hardwareID);
+                            code = null;
                             System.out.println(code.message);
                             if (code == StatusCode.HARDWARE_SUCCESS_130) {
                                 System.err.println("THE PROGRAM IS REAL");
@@ -51,7 +68,8 @@ public class Main {
                             System.out.println("enter the license key: XXXX-XXXX-XXXX-XXXX");
                             in = scanner.nextLine();
                             if (in.matches(REGEX_KEY)) {
-                                code = restClient.get("/check/license", in);
+                                code = null;
+//                                code = restClient.get("/check/license", in);
                                 System.out.println(code.message);
                             }
                             //ввод ключа. Проверка его на сервере.
