@@ -4,7 +4,7 @@ public enum StatusCode {
 
     LOGIN_SUCCESS_101("Successful authorization!", 101),
     REGISTRATION_SUCCESS_110("Successful registration", 110),
-    LICENSE_SUCCESS_120("The license key has been successfully activated", 210),
+    LICENSE_SUCCESS_120("The license key has been successfully activated", 120),
     HARDWARE_SUCCESS_130("The hardware configuration is correct", 130),
 
     LOGIN_FAILED_201("User does not exist", 201),
@@ -15,7 +15,9 @@ public enum StatusCode {
     LICENSE_FAILED_220("The license key is already activated!", 220),
     LICENSE_FAILED_221("The license key does not exist!", 221),
 
-    HARDWARE_FAILED_230("The hardware configuration is incorrect", 230);
+    HARDWARE_FAILED_230("The hardware configuration is incorrect", 230),
+    HARDWARE_FAILED_231("The hardware configuration already exist", 231),
+    STATUS_UNDEFINED("Status undefined", 300);
 
     public final String message;
     public final int code;
@@ -25,7 +27,12 @@ public enum StatusCode {
         this.code = code;
     }
 
-    public static StatusCode findByCode(String name){
-        return StatusCode.valueOf(name);
+    public static StatusCode findByCode(int code){
+        for(StatusCode sc : values()){
+            if(sc.code == code){
+                return sc;
+            }
+        }
+        return STATUS_UNDEFINED;
     }
 }

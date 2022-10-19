@@ -8,6 +8,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.SimpleTimeZone;
 
 
@@ -30,7 +31,7 @@ public class RestClient {
         return restClient;
     }
 
-    public String get(String uri, MultiValueMap<String, String> params) {
+    public Integer get(String uri, MultiValueMap<String, String> params) {
 
         String urlTemplate = UriComponentsBuilder.fromHttpUrl(server + uri)
                 .queryParams(params)
@@ -43,7 +44,7 @@ public class RestClient {
                 entity,
                 String.class,
                 params);
-        return response.getBody();
+        return Integer.parseInt(Objects.requireNonNull(response.getBody()));
     }
 
 }

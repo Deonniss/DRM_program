@@ -5,6 +5,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.MultiValueMapAdapter;
 import rest.RestClient;
+import rest.RestRequest;
 import rest.StatusCode;
 
 import java.util.HashMap;
@@ -18,16 +19,16 @@ public class Main {
     private static final String REGEX_KEY = "^\\w{4}-\\w{4}-\\w{4}-\\w{4}$";
 
 
-    public static void main(String[] args) {
+    public static void main6(String[] args) {
 
         MultiValueMap<String, String> ma = new LinkedMultiValueMap<>();
 
 //        MultiM<String, String> m = new MultiValueMapAdapter<>();
         ma.add("username", "den1");
         ma.add("password", "0000");
-        System.out.println(restClient.get("/login", ma));
+        System.out.println(StatusCode.findByCode(restClient.get("/login", ma)).code);
     }
-    public static void main2(String[] args) {
+    public static void main(String[] args) {
 
 
         String in = "";
@@ -39,45 +40,67 @@ public class Main {
             in = scanner.nextLine();
 
             if (!in.isBlank()) {
+
+
                 String[] params = in.split("\\s+");
 
                 if (params.length == 5 && params[1].equalsIgnoreCase("-u") && params[3].equalsIgnoreCase("-p")
                         && (params[0].equalsIgnoreCase("reg") || params[0].equalsIgnoreCase("log")) && params[2].length() > 2
                         && params[2].length() < 10 && params[4].length() > 2 && params[4].length() < 10) {
-                    UserData userData = new UserData(params[2].toLowerCase(), params[4].toLowerCase(), params[0].toLowerCase());
-                    StatusCode code = null;
-//                    StatusCode code = restClient.get("/login", JSONObject.valueToString(userData));
 
+                    MultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
+                    requestParams.add("username", params[2].toLowerCase());
+                    requestParams.add("password", params[4].toLowerCase());
+
+                    StatusCode code;
+                    String hardwareID;
+
+                    if (params[0].equalsIgnoreCase("log")) {
+                        code = StatusCode.findByCode(restClient.get(RestRequest.LOGIN.name, requestParams));
+                    } else {
+                        code = StatusCode.findByCode(restClient.get(RestRequest.REGISTRATION.name, requestParams));
+                    }
+                    requestParams.clear();
                     System.out.println(code.message);
 
                     switch (code) {
                         case LOGIN_SUCCESS_101:
                             //генерация и отправка hardware и проверка уникальности
-                            String hardwareID = ComputerIdentifierHandler.generateLicenseKey();
-//                            code = restClient.get("/check/hardware", hardwareID);
-                            code = null;
+                            hardwareID = ComputerIdentifierHandler.generateLicenseKey();
+                            requestParams.add("username", params[2].toLowerCase());
+                            requestParams.add("hardware", hardwareID);
+                            code = StatusCode.findByCode(restClient.get(RestRequest.HARDWARE.name, requestParams));
+                            requestParams.clear();
+
                             System.out.println(code.message);
                             if (code == StatusCode.HARDWARE_SUCCESS_130) {
                                 System.err.println("THE PROGRAM IS REAL");
                             } else {
                                 System.err.println("THE PROGRAM IS STOLEN");
                             }
-                            in = "q";
                             break;
                         case REGISTRATION_SUCCESS_110:
                             System.out.println("enter the license key: XXXX-XXXX-XXXX-XXXX");
                             in = scanner.nextLine();
                             if (in.matches(REGEX_KEY)) {
-                                code = null;
-//                                code = restClient.get("/check/license", in);
+                                requestParams.add("username", params[2].toLowerCase());
+                                requestParams.add("key", in);
+                                code = StatusCode.findByCode(restClient.get(RestRequest.LICENSE.name, requestParams));
+                                requestParams.clear();
+
                                 System.out.println(code.message);
+                                if (code == StatusCode.LICENSE_SUCCESS_120) {
+                                    hardwareID = ComputerIdentifierHandler.generateLicenseKey();
+                                    requestParams.add("username", params[2].toLowerCase());
+                                    requestParams.add("hardware", hardwareID);
+                                    code = StatusCode.findByCode(restClient.get(RestRequest.HARDWARE_ADD.name, requestParams));
+                                    requestParams.clear();
+                                    System.out.println(code.message);
+                                }
                             }
                             //ввод ключа. Проверка его на сервере.
                             break;
-                        case LOGIN_FAILED_201:
-                        case LOGIN_FAILED_202:
-                        case LOGIN_FAILED_203:
-                        case REGISTRATION_FAILED_210:
+                        default:
                             System.out.println("Try again!");
                     }
                 }
