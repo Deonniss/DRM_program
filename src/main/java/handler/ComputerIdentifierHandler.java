@@ -6,7 +6,7 @@ public class ComputerIdentifierHandler {
 
     private static final String DELIMITER = "#";
 
-    public static String generateLicenseKey() {
+    public static String generateHardware() {
         SystemInfo systemInfo = new SystemInfo();
         String processorID = systemInfo.getHardware().getProcessor().getProcessorIdentifier().getProcessorID();
         String baseboardID = systemInfo.getHardware().getComputerSystem().getBaseboard().getSerialNumber();

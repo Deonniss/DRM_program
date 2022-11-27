@@ -14,10 +14,9 @@ dependencies {
     implementation group: 'org.springframework', name: 'spring-web', version: '5.3.23'
     implementation group: 'com.github.oshi', name: 'oshi-core', version: '6.2.2'
     implementation group: 'org.json', name: 'json', version: '20220924'
+    implementation 'org.slf4j:slf4j-nop:2.0.5'
 
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 }
 
 test {

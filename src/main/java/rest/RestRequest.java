@@ -3,10 +3,7 @@ package rest;
 public enum RestRequest {
 
     LOGIN("/login"),
-    REGISTRATION("/registration"),
-    HARDWARE("/hardware"),
-    HARDWARE_ADD("/hardware/add"),
-    LICENSE("/license");
+    REGISTRATION("/registration");
 
     public final String name;
 
