@@ -15,10 +15,20 @@ import static rest.StatusCode.*;
 public class Main {
 
     private static final Scanner scanner = new Scanner(System.in);
-    private static final RestClient restClient = RestClient.getInstance();
-
 
     public static void main(String[] args) {
+
+        RestClient restClient;
+        switch (args.length) {
+            case 1:
+                restClient = RestClient.getInstance(args[0]);
+                break;
+            case 2:
+                restClient = RestClient.getInstance(args[0], args[1]);
+                break;
+            default:
+                restClient = RestClient.getInstance();
+        }
 
         String in;
         while (true) {
